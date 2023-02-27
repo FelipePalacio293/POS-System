@@ -1,0 +1,88 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: #F4F4F4;
+}
+
+.container {
+	margin: 20px auto;
+	max-width: 800px;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+	margin-bottom: 20px;
+}
+
+form label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+form input[type="text"], form input[type="email"], form input[type="password"] {
+	display: block;
+	margin-bottom: 20px;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+form button[type="submit"] {
+	background-color: #428bca;
+	color: #fff;
+	padding: 5px 20px;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+}
+
+table {
+	margin-top: 20px;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table th, table td {
+	padding: 10px;
+	border: 1px solid #ccc;
+	text-align: center;
+}
+
+table th {
+	background-color: #eee;
+}
+
+table td button {
+	background-color: #d9534f;
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+}
+
+table td .edit-btn {
+	background-color: #5cb85c;
+}
+
+table td .update-btn {
+	background-color: #428bca;
+}
+
+table td .cancel-btn {
+	background-color: #d9534f;
+}
+
+.hide {
+	display: none;
+}
