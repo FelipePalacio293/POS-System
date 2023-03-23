@@ -57,4 +57,16 @@ class ItemController extends Controller
         Item::find($id)->delete();
         return redirect()->to('/inventario/mostrar/items');
     }
+
+    public function getItemNameAndPrice2(Request $request){
+        $codigoDeBarras = 51541845;
+        $item = Item::where('CodigoDeBarras', $codigoDeBarras)->firstOrFail();
+        return response()->json($item);
+    }
+
+    public function getItemNameAndPrice(Request $request){
+        $codigoDeBarras = $request->input('codigoDeBarras');
+        $item = Item::where('CodigoDeBarras', $codigoDeBarras)->firstOrFail();
+        return response()->json($item);
+    }
 }

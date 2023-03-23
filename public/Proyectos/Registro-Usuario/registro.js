@@ -3,31 +3,46 @@ const usuariosRegistrados = [];
 // Función para agregar usuario
 function agregarUsuario() {
     const nombre = document.getElementById( "nombre" ).value;
-    const email = document.getElementById( "email" ).value;
     const contraseña = document.getElementById( "contraseña" ).value;
     const indiceUsuario = document.getElementById( "indiceUsuario" ).value;
-
-    if( indiceUsuario ){
-        // Actualizar un usuario existente
-        usuariosRegistrados[ indiceUsuario ].nombre = nombre;
-        usuariosRegistrados[ indiceUsuario ].email = email;
-        usuariosRegistrados[ indiceUsuario ].contraseña = contraseña;
-        document.getElementById( "botonRegistro" ).innerHTML = "Registrar";
-        limpiarRegistro();
-        mostrarUsuarios();
-    } 
-    else {
-        // Agregar un nuevo usuario
-        usuariosRegistrados.push( { nombre, email, contraseña } );
-        limpiarRegistro();
-        mostrarUsuarios();
-    }
+    var nombreItem = "error";
+    var precioItem = "error";
+    $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url: "/get-item-data?codigoDeBarras=" + nombre,
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            nombreItem = data.NombreProducto;
+            precioItem = data.PrecioProducto;
+            if(data.Cantidad >= contraseña){ 
+                if( indiceUsuario ){
+                    // Actualizar un usuario existente
+                    usuariosRegistrados[ indiceUsuario ].nombre = nombre;
+                    usuariosRegistrados[ indiceUsuario ].contraseña = contraseña;
+                    usuariosRegistrados[ indiceUsuario ].precioItem = precioItem * contraseña;
+                    usuariosRegistrados[ indiceUsuario ].nombreItem = nombreItem;
+                    document.getElementById( "botonRegistro" ).innerHTML = "Registrar";
+                    limpiarRegistro();
+                    mostrarUsuarios();
+                } 
+                else {
+                    // Agregar un nuevo usuario
+                    usuariosRegistrados.push( { nombre, contraseña, precioItem, nombreItem } );
+                    limpiarRegistro();
+                    mostrarUsuarios();
+                }
+            }
+            else{
+                alert('No hay suficiente cantidad del producto! En stock hay ' + data.Cantidad);
+            }
+        }
+    });    
 }
 
 // Función para limpiar los campos del formulario
 function limpiarRegistro() {
     document.getElementById( "nombre" ).value = "";
-    document.getElementById( "email" ).value = "";
     document.getElementById( "contraseña" ).value = "";
     document.getElementById( "indiceUsuario" ).value = "";
 }
@@ -39,8 +54,9 @@ function mostrarUsuarios() {
     for( let i = 0; i < usuariosRegistrados.length; i++ ){
         tableHtml += "<tr>";
         tableHtml += "<td>" + usuariosRegistrados[ i ].nombre + "</td>";
-        tableHtml += "<td>" + usuariosRegistrados[ i ].email + "</td>";
         tableHtml += "<td>" + usuariosRegistrados[ i ].contraseña + "</td>";
+        tableHtml += "<td>" + usuariosRegistrados[ i ].precioItem + "</td>";
+        tableHtml += "<td>" + usuariosRegistrados[ i ].nombreItem + "</td>";
         tableHtml += "<td><button onclick='editarusuario(" + i + ")'>Editar</button> <button onclick='eliminarUsuario(" + i + ")'>Eliminar</button></td>";
         tableHtml += "</tr>";
     }
@@ -50,7 +66,6 @@ function mostrarUsuarios() {
 // Función para editar un usuario
 function editarusuario( indiceUsuario ) {
     document.getElementById( "nombre" ).value = usuariosRegistrados[ indiceUsuario ].nombre;
-    document.getElementById( "email" ).value = usuariosRegistrados[ indiceUsuario ].email;
     document.getElementById( "contraseña" ).value = usuariosRegistrados[ indiceUsuario ].contraseña;
     document.getElementById( "botonRegistro" ).innerHTML = "Actualizar";
     document.getElementById( "indiceUsuario" ).value = indiceUsuario;
@@ -64,10 +79,12 @@ function eliminarUsuario( indiceUsuario )  {
 }
 
 function sendData(){
-    console.log(usuariosRegistrados);
+    const metodo = document.getElementById( "metodo" ).value;
+    const CorreoCliente = document.getElementById( "CorreoCliente" ).value;
+    console.log(metodo + CorreoCliente);
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        data: { valores: usuariosRegistrados},
+        data: { valores: usuariosRegistrados, metodo: metodo, correoCliente: CorreoCliente},
         method: "POST",
         url: "/ventas/vender",
         beforesend: function(){
@@ -94,4 +111,27 @@ form.addEventListener( "submit", function ( event ) {
 
     // Llamar a la función agregarUsuario()
     agregarUsuario();
+});
+
+$(function() {
+    $("#nombre").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "/search",
+                dataType: "json",
+                data: {
+                    query: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.CodigoDeBarras,
+                            value: item.CodigoDeBarras
+                        }
+                    }));
+                }
+            });
+        },
+        minLength: 1
+    });
 });

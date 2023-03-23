@@ -10,9 +10,9 @@
 			<h1>Iniciar Sesión</h1>
 			<form>
 				<label for="usuario">Usuario</label>
-				<input type="text" id="usuario" name="usuario" required>
+				<input type="text" id="usuario" name="name" required>
 				<label for="contraseña">Contraseña</label>
-				<input type="password" id="contraseña" name="contraseña" required>
+				<input type="password" id="contraseña" name="password" required>
 				<input type="submit" value="Ingresar">
 			</form>
 			<div class="links">

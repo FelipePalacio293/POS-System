@@ -33,12 +33,12 @@ nav ul li {
   }
   
 nav ul li a {
-    color: #333;
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-  }
+  color: #333;
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
 
 nav ul li a img {
     height: 1em;
